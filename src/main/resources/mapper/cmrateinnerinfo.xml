@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.crm.dao.CmRateInnerInfoDao">
+
+	<insert id="add" parameterType="java.util.HashMap">
+		insert into cm_rate_inner_info 
+		(company,channel,kind,rate,stime,etime,ctime,user_id,remark)
+		values
+		(#{company},#{channel},#{kind},#{rate},#{stime},#{etime},#{ctime},#{user_id},#{remark})
+	</insert>
+	<select id="queryMax" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select max(stime)stime, max(etime) etime ,ctime, kind 
+		from cm_rate_inner_info where 
+		company = #{company} and channel = #{channel} and kind = #{kind} 
+	</select>
+	<select id="query" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select crin.pid,crin.company, crin.channel, crin.kind, crin.rate, crin.stime,crin.etime,crin.ctime,crin.user_id, crin.remark,cui.name 
+		from cm_rate_inner_info crin
+		LEFT JOIN cm_user_info cui
+		ON crin.user_id=cui.user_id
+		<trim prefixOverrides="and" prefix="where">
+			<if test="company != null"> and crin.company = #{company} </if>
+			<if test="channel != null"> and crin.channel = #{channel} </if>
+			<if test="kind != null"> and crin.kind = #{kind} </if>
+			<if test="underwrite_date != null"> and crin.stime <![CDATA[ <= ]]> #{underwrite_date} </if>
+		</trim>
+		order by stime desc
+	</select>
+	<update id="modify" parameterType="java.util.HashMap">
+		update cm_rate_inner_info 
+		<trim prefix="set" prefixOverrides=",">
+			<if test="etime != null"> etime = #{etime} </if>
+		</trim>
+		where pid = #{pid} 
+	</update>
+	<delete id="delete" parameterType="java.util.HashMap">
+		delete from cm_rate_inner_info where pid = #{pid} 
+	</delete>
+
+</mapper>

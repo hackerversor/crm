@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.crm.dao.CmTeamRoleInfoDao">
+ 	<insert id="replace" parameterType="java.util.HashMap">
+ 		replace into cm_team_role_info (team_id,role_id) values (#{team_id},#{role_id})
+ 	</insert>
+ 	
+ 	<delete id="delete" parameterType="java.util.HashMap">
+ 		delete from  cm_team_role_info  where team_id = #{team_id}
+		<if test="role_id != null"> and role_id = #{role_id}</if>
+		
+ 	</delete>
+ 	
+ 	<select id="queryOne" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+ 		select  a.team_id,a.role_id,b.role_name from  cm_team_role_info a,sys_role_info b  where a.role_id = b.role_id and a.team_id = #{team_id} and a.role_id = #{role_id}
+ 	</select>
+ 	
+ 	<select id="queryTeamAndRole" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+ 		<!-- select  a.team_id,a.role_id,b.role_name,c.menu_name from  cm_team_role_info a,sys_role_info b, sys_menu_info c, sys_role_menu_info d
+ 		where a.role_id = d.role_id and d.menu_id=c.menu_id and a.role_id=b.role_id  -->
+ 		select  a.team_id,a.role_id,b.role_name from  cm_team_role_info a,sys_role_info b where a.role_id=b.role_id 
+ 		<trim >
+ 			<if test="team_id != null"> and a.team_id = #{team_id}</if>
+ 			<if test="role_id != null"> and a.role_id = #{role_id}</if>
+ 		</trim>
+ 	</select>
+ 	
+</mapper>

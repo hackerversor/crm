@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.crm.dao.PmCattleInfoDao">
+	<select id="getById" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+		select cattle_id,cusid,name,phone,email,ctime,status,remark from pm_cattle_info where cattle_id = #{cattle_id} and status = #{status}
+	</select>
+	
+	<select id="getByCusid" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+		select cattle_id,cusid,name,phone,email,ctime,status,remark from pm_cattle_info where cusid = #{cusid} and status = #{status}
+	</select>
+	<insert id="create" parameterType="java.util.HashMap">
+		insert into pm_cattle_info
+		(cattle_id,cusid,name,phone,email,ctime,status,remark )
+		value
+		(#{cattle_id},#{cusid},#{name},#{phone},#{email},#{ctime},#{status},#{remark})
+	</insert>
+	
+	<select id="getCattleByPhone" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select cattle_id,cusid,name,phone,email,ctime,status,remark from pm_cattle_info where phone = #{phone} and status = 'normal'
+	</select>
+</mapper>

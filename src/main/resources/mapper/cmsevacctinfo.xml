@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.crm.dao.CmSevAcctInfoDao">
+	<select id="listAccts" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select acct_id,login_name,login_pwd,login_url,acct_desc,server_sup,
+		auth_type,auth_set,a.user_id,b.name,a.phone,a.email,a.status,a.remark 
+		from cm_sev_acct_info a
+		left join cm_user_info b on a.user_id = b.user_id
+		<trim prefix="where" prefixOverrides="and"> 
+			<if test="acct_id != null"> and acct_id = #{acct_id}</if>
+			<if test="login_name != null"> and login_name = #{login_name}</if>
+			<if test="server_sup != null"> and server_sup = #{server_sup}</if>
+			<if test="user_id != null"> and a.user_id = #{user_id}</if>
+			<if test="status != null"> and a.status = #{status}</if>
+		</trim> 
+	</select>
+	
+	<select id="query" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select acct_id,login_name,login_pwd,login_url,acct_desc,server_sup,
+		auth_type,auth_set,a.user_id,b.name,a.phone,a.email,a.status,a.remark 
+		from cm_sev_acct_info a
+		left join cm_user_info b on a.user_id = b.user_id
+		<trim prefix="where" prefixOverrides="and"> 
+			<if test="acct_id != null"> acct_id = #{acct_id}</if>
+			<if test="server_sup != null"> server_sup = #{server_sup}</if>
+			<if test="login_name != null"> login_name = #{login_name}</if>
+		</trim> 
+	</select>
+	<select id="queryLock" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select acct_id,login_name,login_pwd,login_url,acct_desc,server_sup,
+		auth_type,auth_set,a.user_id,b.name,a.phone,a.email,a.status,a.remark 
+		from cm_sev_acct_info a
+		left join cm_user_info b on a.user_id = b.user_id
+		<trim prefix="where" prefixOverrides="and"> 
+			<if test="acct_id != null"> acct_id = #{acct_id}</if>
+			<if test="login_name != null"> login_name = #{login_name}</if>
+		</trim> 
+	</select>
+	
+	<insert id="add" parameterType="java.util.HashMap">
+		insert into cm_sev_acct_info 
+		(acct_id,login_name,login_pwd,login_url,acct_desc,server_sup,auth_type,auth_set,user_id,phone,email,status,remark)
+		values
+		(#{acct_id},#{login_name},#{login_pwd},#{login_url},#{acct_desc},#{server_sup},#{auth_type},#{auth_set},#{user_id},#{phone},#{email},#{status},#{remark})
+	</insert>
+	
+	<delete id="del" parameterType="java.util.HashMap">
+		delete from cm_sev_acct_info where acct_id = #{acct_id}
+	</delete>
+	
+	<update id="update" parameterType="java.util.HashMap" >
+		update cm_sev_acct_info  
+		<trim prefix="set" prefixOverrides=",">
+			<if test="login_name != null"> , login_name = #{login_name} </if>
+			<if test="login_pwd != null"> , login_pwd = #{login_pwd} </if>
+			<if test="login_url != null"> , login_url = #{login_url} </if>
+			<if test="acct_desc != null"> , acct_desc = #{login_name} </if>
+			<if test="server_sup != null"> , server_sup = #{server_sup} </if>
+			<if test="auth_type != null"> , auth_type = #{auth_type} </if>
+			<if test="auth_set != null"> , auth_set = #{auth_set} </if>
+			<if test="user_id != null"> , user_id = #{user_id} </if>
+			<if test="phone != null"> , phone = #{phone} </if>
+			<if test="email != null"> , email = #{email} </if>
+			<if test="status != null"> , status = #{status} </if>
+			<if test="remark != null"> , remark = #{remark} </if>
+		</trim>
+		where acct_id = #{acct_id}
+	</update>
+	
+</mapper>

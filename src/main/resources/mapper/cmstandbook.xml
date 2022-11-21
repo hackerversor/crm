@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.crm.dao.CmStandBookDao">
+
+	<insert id="add" parameterType="java.util.HashMap">
+		insert into cm_stand_book 
+		(tzid, channel,company,policy,issu_time,issu_acct_no,insure_name,phone1,phone2,insure_idno,car_owner_idno,Insured_name,
+		Insured_idno,under_write_date,car_no,<![CDATA[ engine ]]>,vin,brand,reg_date,turn_renew,kind,premium,rate,tax,sdate,edate,
+		discount_amt,discount,jy_amt,acct_name,acct_amt,bank_code,card_no,user_id,auth_status,premium_type,recrod_status,ctime)
+		values
+		(#{tzid},#{channel},#{company},#{policy},#{issu_time},#{issu_acct_no},#{insure_name},#{phone1},#{phone2},#{insure_idno},
+		#{car_owner_idno},#{Insured_name},#{Insured_idno},#{under_write_date},#{car_no},#{engine},#{vin},#{brand},#{reg_date},#{turn_renew},
+		#{kind},#{premium},#{rate},#{tax},#{sdate},#{edate},#{discount_amt},#{discount},#{jy_amt},#{acct_name},#{acct_amt},#{bank_code},#{card_no},
+		#{user_id},#{auth_status},#{premium_type},#{recrod_status},#{ctime})
+	</insert>
+	
+	<insert id="addStandBookAuth" parameterType="java.util.HashMap">
+		insert into cm_stand_book_auth 
+		(tzid,status,send_user_id,send_time,auth_user_id,auth_time,last_user_id,last_time,auth_remark,ctime)
+		values
+		(#{tzid},#{status},#{send_user_id},#{send_time},#{auth_user_id},#{auth_time},#{last_user_id},#{last_time},#{auth_remark},#{ctime})
+	</insert>
+	
+	<select id="queryForSalesman" resultType="java.util.HashMap" parameterType="java.util.HashMap" >
+		select a.tzid,a.channel,a.company,a.issu_time,a.issu_acct_no,a.insure_name,a.phone1,a.phone2,a.insure_idno,a.car_owner_idno,a.Insured_name,a.car_no,
+		<![CDATA[ a.engine ]]>,a.vin,a.brand,a.reg_date,a.turn_renew,a.policy,a.under_write_date,a.kind,a.premium,a.rate,a.tax,a.sdate,a.edate,a.discount_amt,
+		a.discount,a.jy_amt,a.acct_name,a.acct_amt,a.bank_code,a.card_no,a.auth_status,a.user_id,b.auth_user_id,b.auth_user_id,c.name as auther, d.name as user_name
+		from cm_stand_book a,cm_stand_book_auth b, cm_user_info c, cm_user_info d
+		where a.tzid =b.tzid and b.auth_user_id =c.user_id and a.user_id=d.user_id and a.user_id=#{user_id}
+		<trim>
+			<if test="company != null"> and a.company = #{company} </if>
+			<if test="channel != null"> and a.channel = #{channel} </if>
+			<if test="under_write_date_s != null"> and a.sdate <![CDATA[>= ]]>#{under_write_date_s} </if>
+			<if test="under_write_date_e != null"> and a.edate <![CDATA[<= ]]>#{under_write_date_e} </if>
+			<if test="insure_name != null"> and a.insure_name =  #{insure_name} </if>
+			<if test="phone1 != null"> and a.phone1 =  #{phone1} </if>
+			<if test="car_no != null"> and a.car_no =  #{car_no} </if>
+			<if test="auth_status != null"> and a.auth_status =  #{auth_status} </if>
+		</trim>
+	</select>
+	
+	<select id="queryForLeader" resultType="java.util.HashMap" parameterType="java.util.HashMap" >
+		select a.tzid,a.channel,a.company,a.issu_time,a.issu_acct_no,a.insure_name,a.phone1,a.phone2,a.insure_idno,a.car_owner_idno,a.Insured_name,a.Insured_idno,
+		a.car_no,<![CDATA[ a.engine ]]>,a.vin,a.brand,a.reg_date,a.turn_renew,a.policy,a.under_write_date,a.kind,a.premium,a.rate,a.tax,a.sdate,a.edate,a.discount_amt,
+		a.discount,a.jy_amt,a.acct_name,a.acct_amt,a.bank_code,a.card_no,a.auth_status,a.user_id,b.auth_user_id, c.name as auther, d.name as user_name
+		from cm_stand_book a, cm_stand_book_auth b, cm_user_info c,cm_user_info d
+		where a.tzid=b.tzid and b.auth_user_id =c.user_id and a.user_id=d.user_id and a.auth_status =  #{auth_status} 
+		<trim>
+			<if test="company != null"> and a.company = #{company} </if>
+			<if test="channel != null"> and a.channel = #{channel} </if>
+			<if test="user_id != null"> and a.user_id = #{user_id} </if>
+			<if test="under_write_date_s != null"> and a.sdate <![CDATA[>= ]]> #{under_write_date_s} </if>
+			<if test="under_write_date_e != null"> and a.edate <![CDATA[<= ]]> #{under_write_date_e} </if>
+			<if test="insure_name != null"> and a.insure_name =  #{insure_name} </if>
+			<if test="phone1 != null"> and a.phone1 =  #{phone1} </if>
+			<if test="car_no != null"> and a.car_no =  #{car_no} </if>
+			<if test="auth_user_id != null"> and b.auth_user_id=#{auth_user_id} </if> 
+		</trim>
+	</select>
+	
+	<select id="queryForManager" resultType="java.util.HashMap" parameterType="java.util.HashMap" >
+		select a.tzid,a.channel,a.company,a.issu_time,a.issu_acct_no,a.insure_name,a.phone1,a.phone2,a.insure_idno,a.car_owner_idno,a.Insured_name,a.Insured_idno,
+		a.car_no,<![CDATA[ a.engine ]]>,a.vin,a.brand,a.reg_date,a.turn_renew,a.policy,a.under_write_date,a.kind,a.premium,a.rate,a.tax,a.sdate,a.edate,a.discount_amt,
+		a.discount,a.jy_amt,a.acct_name,a.acct_amt,a.bank_code,a.card_no,a.auth_status,a.user_id,b.auth_user_id, c.name as auther, d.name as user_name 
+		from cm_stand_book a,cm_stand_book_auth b, cm_user_info c,cm_user_info d 
+		where a.tzid=b.tzid and b.auth_user_id =c.user_id and a.user_id=d.user_id and auth_status =  #{auth_status} 
+		<trim>
+			<if test="company != null"> and a.company = #{company} </if>
+			<if test="channel != null"> and a.channel = #{channel} </if>
+			<if test="user_id != null"> and a.user_id = #{user_id} </if>
+			<if test="under_write_date_s != null"> and a.sdate <![CDATA[>= ]]> #{under_write_date_s} </if>
+			<if test="under_write_date_e != null"> and a.edate <![CDATA[<= ]]> #{under_write_date_e} </if>
+			<if test="insure_name != null"> and a.insure_name =  #{insure_name} </if>
+			<if test="phone1 != null"> and a.phone1 =  #{phone1} </if>
+			<if test="car_no != null"> and a.car_no =  #{car_no} </if>
+			<if test="auth_user_id != null"> and b.auth_user_id=#{auth_user_id} </if> 
+		</trim>
+	</select>
+	
+	<select id="queryByCarNo" resultType="java.util.HashMap" parameterType="java.util.HashMap" >
+		select a.tzid,a.channel,a.company,a.issu_time,a.issu_acct_no,a.insure_name,a.phone1,a.phone2,a.insure_idno,a.car_owner_idno,a.Insured_name,
+		a.Insured_idno,a.car_no,<![CDATA[a.engine]]>,a.vin,a.brand,a.reg_date,a.turn_renew,a.policy,a.under_write_date,a.kind,a.premium,a.rate,a.tax,a.sdate,a.edate,
+		a.discount_amt,a.discount,a.jy_amt,a.acct_name,a.acct_amt,a.bank_code,a.card_no,a.auth_status,a.user_id,b.auth_user_id<!-- ,b.auther_name -->
+		from cm_stand_book a, cm_stand_book_auth b where a.car_no = #{car_no} and a.tzid=b.tzid and send_user_id =#{send_user_id} and a.auth_status in
+		<foreach collection="auth_status" item="auth_status" index="index" open="(" close=")" separator=",">
+      		#{auth_status}
+    	</foreach>
+	</select>
+	
+	<select id="queryByPolicy" resultType="java.util.HashMap" parameterType="java.util.HashMap" >
+		select car_no,policy from cm_stand_book where policy = #{policy}
+	</select>
+	
+	<select id="queryByTzid" resultType="java.util.HashMap" parameterType="java.util.HashMap" >
+		select car_no from cm_stand_book
+		where auth_status =#{auth_status} and tzid in
+    	<foreach collection="tzid" item="tzid" index="index" open="(" close=")" separator=",">
+      		#{tzid}
+    	</foreach>
+	</select>
+	
+	<select id="queryByCar" resultType="java.util.HashMap" parameterType="java.util.HashMap" >
+		select tzid from cm_stand_book where auth_status =#{auth_status} and car_no =#{car_no}
+	</select>
+	
+	<select id="queryForSalesmanModify" resultType="java.util.HashMap" parameterType="java.util.HashMap" >
+		select a.tzid,a.channel,a.company,a.issu_time,a.issu_acct_no,a.insure_name,a.phone1,a.phone2,a.insure_idno,a.car_owner_idno,a.Insured_name,a.Insured_idno,
+		a.car_no,a.engine,a.vin,a.brand,a.reg_date,a.turn_renew,a.policy,a.under_write_date,a.kind,a.premium,a.rate,a.tax,a.sdate,a.edate,a.discount_amt,a.discount,
+		a.jy_amt,a.acct_name,a.acct_amt,a.bank_code,a.card_no, c.name as auther, 
+	 	a.auth_status,a.user_id from cm_stand_book a, cm_stand_book_auth b,cm_user_info c 
+	 	where a.tzid=b.tzid and b.auth_user_id =c.user_id and a.user_id = #{user_id} and auth_status in
+		<foreach collection="auth_status" item="auth_status" index="index" open="(" close=")" separator=",">
+      		#{auth_status}
+    	</foreach>
+    	<trim>
+    		<if test="company != null"> and company = #{company} </if>
+    		<if test="channel != null"> and channel = #{channel} </if>
+    		<if test="under_write_date_s != null"> and sdate = #{under_write_date_s} </if>
+    		<if test="under_write_date_e != null"> and edate = #{under_write_date_e} </if>
+    		<if test="insure_name != null"> and insure_name = #{insure_name} </if>
+    		<if test="phone1 != null"> and phone1 = #{phone1} </if>
+    		<if test="car_no != null"> and car_no = #{car_no} </if>
+    	</trim>
+	</select>
+	
+	<select id="list" resultType="java.util.HashMap" parameterType="java.util.HashMap" >
+		select a.tzid,a.channel,a.company,a.policy,a.issu_time,a.issu_acct_no,a.insure_name,a.phone1,a.phone2,a.insure_idno,a.car_owner_idno,a.Insured_name,
+		a.insured_idno,a.under_write_date,a.car_no,a.engine,a.vin,a.brand,a.reg_date,a.turn_renew,a.premium_type,a.kind,a.premium,a.rate,a.tax,a.sdate,a.edate,a.discount_amt,
+		a.discount,a.jy_amt,a.acct_name,a.acct_amt,a.bank_code,a.card_no,a.user_id,a.auth_status,a.recrod_status,a.ctime,c.name user_name,d.name auther
+		from  cm_stand_book a,cm_stand_book_auth b,cm_user_info c ,cm_user_info d 
+		where a.tzid = b.tzid and a.user_id = c.user_id and b.auth_user_id = d.user_id
+    	<trim> 
+    		<if test="company != null"> and a.company = #{company} </if>
+    		<if test="channel != null"> and a.channel = #{channel} </if>
+    		<if test="under_write_date_s != null"> and <![CDATA[ under_write_date >= #{under_write_date_s} ]]> </if>
+    		<if test="under_write_date_e != null"> and <![CDATA[ under_write_date <= #{under_write_date_e} ]]> </if>
+    		<if test="insure_name != null"> and a.insure_name = #{insure_name} </if>
+    		<if test="kind != null"> and a.kind = #{kind} </if>
+    		<if test="car_no != null"> and a.car_no = #{car_no} </if>
+    		<if test="auth_status != null"> and a.auth_status = #{auth_status} </if>
+    		<if test="user_id != null"> and a.user_id = #{user_id} </if>
+    	</trim>
+    	limit #{page_num},#{page_count}
+	</select>
+	<select id="queryStatCount" resultType="java.lang.Long" parameterType="java.util.HashMap" >
+		select count(*) count from cm_stand_book  
+	 	<trim prefix="where" prefixOverrides="and"> 
+    		<if test="company != null"> and company = #{company} </if>
+    		<if test="channel != null"> and channel = #{channel} </if>
+    		<if test="under_write_date_s != null"> and <![CDATA[ under_write_date >= #{under_write_date_s} ]]> </if>
+    		<if test="under_write_date_e != null"> and <![CDATA[ under_write_date <= #{under_write_date_e} ]]> </if>
+    		<if test="insure_name != null"> and insure_name = #{insure_name} </if>
+    		<if test="kind != null"> and kind = #{kind} </if>
+    		<if test="car_no != null"> and car_no = #{car_no} </if>
+    		<if test="auth_status != null"> and auth_status = #{auth_status} </if>
+    		<if test="user_id != null"> and user_id = #{user_id} </if>
+    	</trim>
+    	
+	</select>
+
+	<update id="modifyUnAuthStandBook"  parameterType="java.util.HashMap" >
+		update cm_stand_book_auth
+		<trim prefix="set" prefixOverrides=",">
+			<if test="user_id != null">, user_id = #{send_user_id} </if>
+			<if test="send_time != null">, send_time = #{send_time} </if>
+			<if test="auth_user_id != null">, auth_user_id = #{auth_user_id} </if>
+			<if test="auth_time != null">, auth_time = #{auth_time} </if>
+			<if test="last_user_id != null">, last_user_id = #{last_user_id} </if>
+			<if test="last_time != null">, last_time = #{last_time} </if>
+			<if test="auth_remark != null">, auth_remark = #{auth_remark} </if>
+			<if test="ctime != null">  ctime = #{ctime} </if>
+		</trim>
+		where  tzid=#{tzid}  and  status = #{status} 
+	</update>
+	
+	<update id="updateStandBook"  parameterType="java.util.HashMap" >
+		update cm_stand_book
+		<trim prefix="set" prefixOverrides=",">
+			<if test="policy != null">, policy = #{policy} </if>
+			<if test="under_write_date != null">, under_write_date = #{under_write_date} </if>
+			<if test="kind != null">, kind = #{kind} </if>
+			<if test="premium != null">, premium = #{premium} </if>
+			<if test="tax != null">, tax = #{tax} </if>
+			<if test="sdate != null">, sdate = #{sdate} </if>
+			<if test="edate != null">, edate = #{edate} </if>
+			<if test="discount != null">, discount = #{discount} </if>
+			<if test="discount_amt != null">, discount_amt = #{discount_amt} </if>
+			<if test="jy_amt != null">, jy_amt = #{jy_amt} </if>
+			<if test="turn_renew != null">, turn_renew = #{turn_renew} </if>
+			<if test="car_no != null">, car_no = #{car_no} </if>
+			<if test="engine != null">, engine = #{engine} </if>
+			<if test="vin != null">, vin = #{vin} </if>
+			<if test="brand != null">, brand = #{brand} </if>
+			<if test="reg_date != null">, reg_date = #{reg_date} </if>
+			<if test="insure_name != null">, insure_name = #{insure_name} </if>
+			<if test="phone1 != null">, phone1 = #{phone1} </if>
+			<if test="phone2 != null">, phone2 = #{phone2} </if>
+			<if test="insure_idno != null">, insure_idno = #{insure_idno} </if>
+			<if test="car_owner_idno != null">, car_owner_idno = #{car_owner_idno} </if>
+			<if test="car_owner != null">, car_owner = #{car_owner} </if>
+			<if test="Insured_name != null">, Insured_name = #{Insured_name} </if>
+			<if test="acct_name != null">, acct_name = #{acct_name} </if>
+			<if test="acct_amt != null">, acct_amt = #{acct_amt} </if>
+			<if test="discount != null">, discount = #{discount} </if>
+			<if test="jy_amt != null">, jy_amt = #{jy_amt} </if>
+			<if test="acct_name != null">, acct_name = #{acct_name} </if>
+			<if test="acct_amt != null">, acct_amt = #{acct_amt} </if>
+			<if test="bank_code != null">, bank_code = #{bank_code} </if>
+			<if test="card_no != null">, card_no = #{card_no} </if>
+			<if test="channel != null">, channel = #{channel} </if>
+			<if test="company != null">, company = #{company} </if>
+			<if test="issu_time != null">, issu_time = #{issu_time} </if>
+			<if test="user_id != null">, user_id = #{user_id} </if>
+			<if test="issu_acct_no != null">, issu_acct_no = #{issu_acct_no} </if>
+		</trim>
+		where  tzid=#{tzid}  
+	</update>
+	
+	<update id="standBookModify"  parameterType="java.util.HashMap" >
+		update cm_stand_book
+		<trim prefix="set" prefixOverrides=",">
+			<if test="policy != null">, policy = #{policy} </if>  
+			<if test="channel != null">, channel = #{channel} </if>
+			<if test="company != null">, company = #{company} </if>
+			<if test="issu_time != null">, issu_time = #{issu_time} </if>
+			<if test="user_id != null">, user_id = #{user_id} </if>
+			<if test="issu_acct_no != null">, issu_acct_no = #{issu_acct_no} </if>
+			<if test="insure_name != null">, insure_name = #{insure_name} </if>
+			<if test="phone1 != null">, phone1 = #{phone1} </if>
+			<if test="phone2 != null">, phone2 = #{phone2} </if>
+			<if test="insure_idno != null">, insure_idno = #{insure_idno} </if>
+			<if test="insured_name != null">, insured_name = #{insured_name} </if>
+			<if test="insured_idno != null">, insured_idno = #{insured_idno} </if>
+			<if test="car_owner != null">, car_owner = #{car_owner} </if>
+			<if test="car_owner_idno != null">, car_owner_idno = #{car_owner_idno} </if>
+			<if test="car_no != null">, car_no = #{car_no} </if>
+			<if test="engine != null">, engine = #{engine} </if>
+			<if test="vin != null">, vin = #{vin} </if>
+			<if test="brand != null">, brand = #{brand} </if>
+			<if test="reg_date != null">, reg_date = #{reg_date} </if>
+			<if test="acct_name != null">, acct_name = #{acct_name} </if>
+			<if test="acct_amt != null">, acct_amt = #{acct_amt} </if>
+			<if test="bank_code != null">, bank_code = #{bank_code} </if>
+			<if test="under_write_date != null">, under_write_date = #{under_write_date} </if>
+			<if test="kind != null">, kind = #{kind} </if>
+			<if test="premium != null">, premium = #{premium} </if>
+			<if test="tax != null">, tax = #{tax} </if>
+			<if test="sdate != null">, sdate = #{sdate} </if>
+			<if test="edate != null">, edate = #{edate} </if>
+			<if test="discount != null">, discount = #{discount} </if>
+			<if test="discount_amt != null">, discount_amt = #{discount_amt} </if>
+			<if test="jy_amt != null">, jy_amt = #{jy_amt} </if>
+			<if test="turn_renew != null">, turn_renew = #{turn_renew} </if>
+		</trim>
+		where  tzid=#{tzid}  
+	</update>
+	
+	<delete id="standBookDelete"  parameterType="java.util.HashMap" >
+		delete from cm_stand_book  where  tzid=#{tzid}
+	</delete>
+	
+	<update id="standBookSendAuth"  parameterType="java.util.HashMap" >
+		update cm_stand_book
+		<trim prefix="set" prefixOverrides=",">
+			<if test="user_id != null">, user_id = #{user_id} </if>
+			<if test="auth_status != null">, auth_status = #{auth_status} </if>
+		</trim>
+		where  tzid=#{tzid}  and car_no=#{car_no}
+	</update>
+	<update id="standBookAuth"  parameterType="java.util.HashMap" >
+		update cm_stand_book_auth
+		<trim prefix="set" prefixOverrides=",">
+			<if test="send_user_id != null">, send_user_id = #{send_user_id} </if>
+			<if test="auth_status != null">, status = #{auth_status} </if>
+		</trim>
+		where  tzid=#{tzid}
+	</update>
+	
+	<update id="standBookLeaderAuth"  parameterType="java.util.HashMap" >
+		update cm_stand_book set auth_status=#{auth_status} where  tzid=#{tzid} 
+	</update>
+	<update id="standBookLdAuth"  parameterType="java.util.HashMap" >
+		update cm_stand_book_auth set status=#{auth_status}, auth_time=#{auth_time}
+		<trim>
+			<if test="auth_user_id != null">, auth_user_id = #{auth_user_id} </if>
+			<if test="auth_remark != null">, auth_remark = #{auth_remark} </if>
+		</trim>
+		where  tzid=#{tzid} 
+	</update>
+	
+	<update id="standBookManagerAuth"  parameterType="java.util.HashMap" >
+		update cm_stand_book set auth_status=#{auth_status}	where  tzid=#{tzid}  
+	</update>
+	<update id="standBookMgAuth"  parameterType="java.util.HashMap" >
+		update cm_stand_book_auth set auth_user_id=#{auth_user_id},status=#{auth_status}, last_time=#{last_time}
+		<trim>
+			<if test="last_user_id != null">, last_user_id = #{last_user_id} </if>
+			<if test="auth_remark != null">, auth_remark = #{auth_remark} </if>
+		</trim>
+		where  tzid=#{tzid}  
+	</update>
+	
+	<select id="count_user_order" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		
+		select count(*) count,sum(premium) premium,a.user_id,b.name from 
+		 (select car_no, user_id,sum(premium) premium  from cm_stand_book 
+		 where kind in
+		 <foreach collection="kind" item="kind" open="(" close=")" separator=",">
+		 	#{kind}
+		 </foreach>
+		 and <![CDATA[ under_write_date >= #{under_write_date_s}  and under_write_date <= #{under_write_date_e} ]]>
+		  group by user_id,car_no 
+		 ) a , cm_user_info b 
+		 where a.user_id = b.user_id
+		 group by user_id
+		 order by count desc ,b.name desc
+		 
+	</select>
+	
+	<select id="premium_user_order" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		
+		 select sum(premium) premium ,a.user_id,b.name from cm_stand_book a ,cm_user_info b 
+		 where a.user_id = b.user_id 
+		 and kind in 
+		 <foreach collection="kind" item="kind" open="(" close=")" separator=",">
+	 		#{kind}
+	 	 </foreach>
+		 <![CDATA[ and under_write_date >= #{under_write_date_s}  and under_write_date <= #{under_write_date_e} ]]>
+		 group by a.user_id order by premium desc ,b.name desc 
+		
+	</select>
+	
+	
+	<select id="premium_count" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select  sum(premium) premium,count(*) count from cm_stand_book
+		<trim	prefix="where" prefixOverrides="and">
+			<if test="under_write_date_s != null"> and <![CDATA[ under_write_date >= #{under_write_date_s}  ]]> </if>
+			<if test="under_write_date_e != null"> and <![CDATA[ under_write_date <= #{under_write_date_e}  ]]> </if>
+			<if test="car_no != null"> and   car_no = #{car_no}   </if>
+			<if test="user_id != null"> and   user_id = #{user_id}   </if>
+			<if test="kind != null"> and   kind in 
+				<foreach collection="kind" item="kind" open="(" close=")" separator=",">
+					#{kind}
+				</foreach>
+			</if>
+		</trim>
+		
+	</select>
+	
+</mapper>

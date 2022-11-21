@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.crm.dao.CmUserIssueAcctInfoDao">
+
+	<select id="queryByUser" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select company,company_name,issue_acct,user_id from cm_user_issue_acct_info where user_id = #{user_id}
+		<trim>
+			<if test="company != null"> and company = #{company} </if>
+		</trim>	
+	</select>
+	
+	<delete id="delete"  parameterType="java.util.HashMap">
+		delete from cm_user_issue_acct_info where user_id = #{user_id} and issue_acct = #{issue_acct}
+	</delete>
+	
+	<insert id="replace"  parameterType="java.util.HashMap">
+		replace into cm_user_issue_acct_info 
+		(company,company_name,issue_acct,user_id)
+		values
+		(#{company},#{company_name},#{issue_acct},#{user_id})
+	</insert>
+
+</mapper>
+
+

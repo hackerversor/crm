@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.crm.dao.SysMenuInfoDao">
+
+	<select id="qryShows" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select menu_id,menu_name,level,up_menu,link_url,icon,seq_index,is_show,has_more,status,remark  from sys_menu_info
+		<trim prefix="where" prefixOverrides="and">
+			<if test="menu_id != null"> and menu_id = #{menu_id}</if>
+			<if test="menu_name != null"> and menu_name like concat('%', #{menu_name}, '%' )</if>
+			<if test="up_menu != null"> and up_menu = #{up_menu}</if>
+			<if test="level != null"> and level = #{level}</if>
+			<if test="is_show != null"> and is_show = #{is_show}</if>
+			<if test="has_more != null"> and has_more = #{has_more}</if>
+			<if test="status != null"> and status = #{status}</if>
+		</trim>
+	</select>
+	
+	<insert id="add" parameterType="java.util.HashMap">
+		insert into sys_menu_info 
+		(menu_id,menu_name,level,up_menu,link_url,icon,seq_index,is_show,has_more,status,remark)
+		values
+		(#{menu_id},#{menu_name},#{level},#{up_menu},#{link_url},#{icon},#{seq_index},#{is_show},#{has_more},#{status},#{remark})
+	</insert>
+	
+	<update id="update" parameterType="java.util.HashMap">
+		update sys_menu_info 
+		<trim prefix="set" prefixOverrides=",">
+			<if test="menu_name != null">, menu_name = #{menu_name}</if>
+			<if test="level != null">, level = #{level}</if>
+			<if test="up_menu != null">, up_menu = #{up_menu}</if>
+			<if test="link_url != null">, link_url = #{link_url}</if>
+			<if test="icon != null">, icon = #{icon}</if>
+			<if test="seq_index != null">, seq_index = #{seq_index}</if>
+			<if test="is_show != null">, is_show = #{is_show}</if>
+			<if test="has_more != null">, has_more = #{has_more}</if>
+			<if test="status != null">, status = #{status}</if>
+			<if test="remark != null">, remark = #{remark}</if>
+		</trim>
+		where menu_id = #{menu_id}
+	</update>
+
+	<select id="getMenusByUser" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		
+		select distinct d.menu_id,d.menu_name,d.level,d.up_menu,d.link_url,d.icon,d.seq_index,d.is_show,d.has_more,d.status,d.remark  
+		from (
+				select  d.menu_id,d.menu_name,d.level,d.up_menu,d.link_url,d.icon,d.seq_index,d.is_show,d.has_more,d.status,d.remark 
+				from cm_user_info a,cm_user_role_info b,sys_role_menu_info c, sys_menu_info d
+				where a.user_id = b.user_id and b.role_id = c.role_id and c.menu_id = d.menu_id and a.user_id  = #{user_id}
+				union
+				select  e.menu_id,e.menu_name,e.level,e.up_menu,e.link_url,e.icon,e.seq_index,e.is_show,e.has_more,e.status,e.remark 
+				from cm_user_info a,cm_team_user_info b,cm_team_role_info c,  sys_role_menu_info d, sys_menu_info e
+				where a.user_id = b.user_id and b.team_id = c.team_id and c.role_id = d.role_id and  d.menu_id = e.menu_id and a.user_id  = #{user_id}
+				)  d
+		<trim prefix="where" prefixOverrides="and">
+			<if test="status != null"> and status = #{status} </if>
+			<if test="is_show != null"> and is_show = #{is_show} </if>
+		</trim>
+		order by menu_id
+	</select>
+	
+	<select id="getMenusByRole" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select distinct d.menu_id,d.menu_name,d.level,d.up_menu,d.link_url,d.icon,d.seq_index,d.is_show,d.has_more,d.status,d.remark 
+		from  sys_role_menu_info c, sys_menu_info d
+		where   c.menu_id = d.menu_id and c.role_id = #{role_id}
+		<if test="status != null"> and d.status = #{status} </if>
+		<if test="is_show != null"> and is_show = #{is_show} </if>
+	</select>
+	
+
+</mapper>

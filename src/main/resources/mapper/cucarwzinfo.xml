@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.crm.dao.CuCarWzInfoDao">
+	
+	<insert id="add" parameterType="java.util.HashMap">
+		insert into cu_car_wz_info
+		(carid,cusid,query_date,wz_time,addr,act,code,fen,city,money,handled,archiveno)
+		values
+		(#{carid},#{cusid},#{query_date},#{wz_time},#{addr},#{act},#{code},#{fen},#{city},#{money},#{handled},#{archiveno})
+	</insert>
+	
+	<select id="list" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+		select pid,carid,cusid,query_date,wz_time,addr,act,code,fen,city,money,handled,archiveno from cu_car_wz_info 
+		<trim prefix="where" prefixOverrides="and">
+			<if test="carid != null"> and carid = #{carid}</if>
+			<if test="cusid != null"> and cusid = #{cusid}</if>
+			<if test="query_date != null"> and query_date = #{query_date}</if>
+		</trim>
+		 
+	</select>
+
+	
+	
+	
+</mapper>

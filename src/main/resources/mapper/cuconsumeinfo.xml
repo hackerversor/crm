@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.crm.dao.CuConsumeInfoDao">
+	<select id="list" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+		select payno,cusid,amt,pay_type,tran_type,ctime,utime,status,remark from cu_consume_info 
+		<trim prefix="where" prefixOverrides="and">
+			<if test="payno != null"> and payno = #{payno}</if>
+			<if test="cusid != null"> and cusid = #{cusid}</if>
+			<if test="tran_type != null"> and tran_type = #{tran_type}</if>
+			<if test="status != null"> and status = #{status}</if>
+		</trim>
+	</select>
+	
+	<select id="getByPayno" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+		select payno,cusid,amt,pay_type,tran_type,ctime,utime,status,remark from cu_consume_info where payno = #{payno}
+	</select>
+	
+	<select id="getByPaynoLock" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+		select payno,cusid,amt,pay_type,tran_type,ctime,utime,status,remark from cu_consume_info where payno = #{payno} for update
+	</select>
+	
+	<insert id="add" parameterType="java.util.HashMap">
+		insert into cu_consume_info
+		(payno,cusid,amt,pay_type,tran_type,ctime,utime,status,remark)
+		value 
+		(#{payno},#{cusid},#{amt},#{pay_type},#{tran_type},#{ctime},#{utime},#{status},#{remark})
+	</insert>
+	
+	<update id="updateStatus" parameterType="java.util.HashMap">
+		update cu_consume_info 
+		<trim prefix="set" prefixOverrides=",">
+			<if test="status != null"> , status = #{status} </if>
+			<if test="utime != null"> , utime = #{utime} </if>
+		</trim>
+		where payno = #{payno}
+	</update>
+	
+	<select id="orderDetailList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select a.payno,a.amt,a.pay_type,a.tran_type,b.tran_name,a.ctime,a.utime,a.status,
+		CONCAT(IFNULL(c.rech_no,''),IFNULL(d.card_no,'')) rech_no,
+		CONCAT(IFNULL(c.status_msg,''),IFNULL(d.status_msg,'')) status_msg,
+		d.cus_name, e.bank_name
+		from cu_consume_info a
+		left join sys_tran_type_info b  on a.tran_type = b.tran_type
+		left join cu_tel_oil_order c on a.payno = c.payno
+		left join pm_cattle_order_info d on a.payno = d.payno
+		left join sys_bank_code e on d.bank_code = e.bank_code
+		where a.cusid = #{cusid}
+	</select>
+	
+</mapper>

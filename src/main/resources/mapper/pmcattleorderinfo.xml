@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.crm.dao.PmCattleOrderInfoDao">
+	<select id="order_query" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+		select order_id,payno,cusid,cus_name,shunt,a.bank_code, bank_name,card_no,notice_id,amt,discount,discount_amt,a.status,status_msg,oper_status,ctime,utime,a.remark 
+		from pm_cattle_order_info a
+		left join sys_bank_code b on a.bank_code = b.bank_code
+		<trim prefix="where" prefixOverrides="and">
+			<if test="order_id != null and order_id !='' "> and order_id = #{order_id}</if>
+			<if test="payno != null and payno !=''"> and payno = #{payno}</if>
+			<if test="card_no != null and card_no !=''"> and card_no = #{card_no}</if>
+			<if test="status != null and status !=''"> and a.status = #{status}</if>
+			<if test="s_date != null and s_date !=''"> and left(ctime,10) <![CDATA[ >= ]]> #{s_date}</if>
+			<if test="e_date != null and e_date !=''"> and left(ctime,10) <![CDATA[ <= ]]>  #{e_date}</if>
+			order by ctime asc
+			limit #{start_index},#{page_count}
+		</trim>
+	</select>
+	
+	<select id="statCount" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		select
+		count(*) num
+		from
+		pm_cattle_order_info
+		<trim prefix="where" prefixOverrides="and">
+			<if test="order_id != null and order_id !=''"> and order_id = #{order_id}</if>
+			<if test="payno != null and payno !=''"> and payno = #{payno}</if>
+			<if test="card_no != null and card_no !=''"> and card_no = #{card_no}</if>
+			<if test="status != null and status !=''"> and status = #{status}</if>
+			<if test="s_date != null and s_date !=''"> and left(ctime,10)  <![CDATA[ >= ]]>  #{s_date}</if>
+			<if test="e_date != null and e_date !=''"> and left(ctime,10) <![CDATA[ <= ]]>  #{e_date}</if>
+			order by ctime asc
+		</trim>
+	</select>
+	
+	 
+	
+ 
+</mapper>

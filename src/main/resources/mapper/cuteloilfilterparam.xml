@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.crm.dao.CuTelOilFilterParamDao">
+	<select id="list" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+		select payno,cusid,pay_type,rech_type,rech_no,amt,status,ext,remark 
+		from cu_tel_oil_filter_param 
+		<trim prefix="where" prefixOverrides="and">
+			<if test="payno != null"> and payno = #{payno}</if>
+			<if test="cusid != null"> and cusid = #{cusid}</if>
+			<if test="rech_no != null"> and rech_no = #{rech_no}</if>
+			<if test="status != null"> and status = #{status}</if>
+		</trim>
+	</select>
+	 
+	<insert id="add" parameterType="java.util.HashMap">
+		insert into cu_tel_oil_order 
+		(payno,cusid,pay_type,rech_type,rech_no,amt,status,ext,remark )
+		values
+		(#{payno},#{cusid},#{pay_type},#{rech_type},#{rech_no},#{amt},#{status},#{ext},#{remark} )
+	</insert>
+</mapper>

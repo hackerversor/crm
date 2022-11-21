@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.crm.dao.SysIconInfoDao">
+	<select id="qryShows" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select icon_title,icon_path,icon_desc from sys_icon_info 
+		<trim prefix="where">
+			<if test="icon_title != null"> and icon_title like concat('%',#{icon_title},'%') </if>
+		</trim>
+	</select>
+
+</mapper>

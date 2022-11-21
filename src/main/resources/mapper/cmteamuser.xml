@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.crm.dao.CmTeamUserDao">
+
+	<insert id="add" parameterType="java.util.HashMap">
+		insert into cm_team_info (team_id, team_name,slogan,user_id,ctime) values (#{team_id},#{team_name},#{slogan},#{user_id},#{ctime} )
+	</insert>
+	
+	<delete id="delete"  parameterType="java.util.HashMap" >
+		delete from cm_team_info where  team_id=#{team_id}  
+	</delete>
+	
+	<update id="modify"  parameterType="java.util.HashMap" >
+		update cm_team_info set 
+		<trim prefixOverrides=",">
+			<if test="team_name != null">, team_name = #{team_name} </if>
+			<if test="slogan != null">, slogan = #{slogan} </if>
+			<if test="user_id != null">, user_id = #{user_id} </if>
+		</trim>
+		where  team_id=#{team_id}  
+	</update>
+	
+	<select id="query"  resultType="java.util.HashMap" parameterType="java.util.HashMap" >
+		select a.team_id,team_name,a.slogan,b.user_id,b.name user_name,a.ctime from cm_team_info a , cm_user_info b where a.user_id =b.user_id 
+		<trim>
+			<if test="team_id != null">and a.team_id=#{team_id} </if>
+			<if test="team_name != null">and a.team_name like  concat('%',#{team_name},'%') </if>
+			<if test="user_id != null">and a.user_id = #{user_id} </if>
+		</trim>
+	</select>
+	
+	<select id="queryTeam"  resultType="java.util.HashMap" parameterType="java.util.HashMap" >
+		select a.team_id,a.user_id,b.team_name,b.slogan,b.user_id,b.ctime,c.name user_name from cm_team_user_info a ,cm_team_info b,cm_user_info c where a.team_id =b.team_id and a.user_id =c.user_id and a.team_id=#{team_id}  
+	</select>
+	<select id="queryUser"  resultType="java.util.HashMap" parameterType="java.util.HashMap" >
+		select c.user_id,c.name,c.sex,c.birthday,c.id_no,c.hiredate,c.email,c.phone,c.leavedate,c.ctime,c.status,c.remark,c.user_no 
+		from cm_team_user_info a ,cm_team_info b , cm_user_info c
+		where a.team_id =b.team_id and a.user_id=c.user_id and a.team_id=#{team_id}  
+	</select>
+	
+	<insert id="memberAdd" parameterType="java.util.HashMap">
+		insert into cm_team_user_info (team_id,user_id) values (#{team_id},#{user_id})
+	</insert>
+	
+	<delete id="memberDel"  parameterType="java.util.HashMap" >
+		delete from cm_team_user_info where  team_id=#{team_id} and user_id = #{user_id}
+	</delete>
+	
+	<select id="queryByMemBer"  resultType="java.util.HashMap" parameterType="java.util.HashMap" >
+		 select a.team_id,a.team_name,a.slogan,a.user_id, c.name,a.ctime 
+		 from cm_team_info a , cm_team_user_info b , cm_user_info c   
+		 where a.team_id = b.team_id   and a.user_id = c.user_id and b.user_id = #{user_id}
+	</select>
+	
+	<select id="queryMerberName"  resultType="java.util.HashMap" parameterType="java.util.HashMap" >
+		 select  distinct a.user_id,b.name from cm_team_user_info a,cm_user_info b
+		 where a.user_id = b.user_id
+		 <if test="team_id != null">and team_id=#{team_id} </if>
+		 <if test="user_id != null">and a.user_id in 
+		 	<foreach collection="user_id" open="("  close=")" item="user_id" separator=",">
+		 		#{user_id}
+		 	</foreach>
+		 </if>
+	</select>
+	
+	
+	
+</mapper>

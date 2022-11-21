@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.crm.dao.CmCodeValueInfoDao">
+
+	<insert id="add" parameterType="java.util.HashMap">
+		insert into cm_code_value_info 
+		(param_class,class_desc,param_code, code_desc)
+		values
+		(#{param_class},#{class_desc},#{param_code},#{code_desc})
+	</insert>
+	<select id="query" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select param_class,class_desc,param_code, code_desc 
+		from cm_code_value_info 
+		<trim prefixOverrides="and" prefix="where">
+			<if test="param_class != null"> and param_class= #{param_class} </if>
+			<if test="param_code != null"> and param_code = #{param_code} </if>
+		</trim>
+	</select>
+	<delete id="delete" parameterType="java.util.HashMap">
+		delete from cm_code_value_info
+		where param_class = #{param_class} and param_code = #{param_code}
+	</delete>
+
+</mapper>

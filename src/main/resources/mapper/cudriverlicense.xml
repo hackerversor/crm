@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.crm.dao.CuDriverLicenseDao">
+	
+	<insert id="add" parameterType="java.util.HashMap">
+		insert into cu_driver_license
+		(licenseid,license_no,cusid,archive,get_date,sdate,edate,license_type,name,sex,city,status,ctime,remark)
+		values
+		(#{licenseid},#{license_no},#{cusid},#{archive},#{get_date},#{sdate},#{edate},#{license_type},#{name},#{sex},#{city},#{status},#{ctime},#{remark})
+	</insert>
+	
+	<select id="list" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+		select licenseid,license_no,cusid,archive,get_date,sdate,edate,license_type,name,sex,city,status,ctime,remark from cu_driver_license
+		<trim prefix="where" prefixOverrides="and">
+			<if test="cusid != null"> and cusid = #{cusid}</if>
+			<if test="licenseid != null"> and licenseid = #{licenseid}</if>
+			<if test="license_no != null"> and license_no = #{license_no}</if>
+			<if test="archive != null"> and archive = #{archive}</if>
+			<if test="status != null"> and status = #{status}</if>
+		</trim>
+	</select>
+	
+	
+	<select id="getById" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select licenseid,license_no,cusid,archive,get_date,sdate,edate,license_type,name,sex,city,status,ctime,remark from cu_driver_license where licenseid = #{licenseid}
+	</select>
+	
+</mapper>

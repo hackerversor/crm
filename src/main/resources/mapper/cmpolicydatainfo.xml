@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.crm.dao.CmPolicyDataInfoDao">
+	<select id="list" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select
+		pid,policy,kind,policy_holder,phone,sex,addr,car_no,frame_no,engine_no,car_owner,idno,car_reg_date,underwrite_date,s_date,e_date,written_premium,fx,source,cust_manager,status,insurance,record_used
+		from cm_policy_data_info
+		<trim prefix="where" prefixOverrides="and">
+			<if test="policy != null"> and policy = #{policy}</if>
+			<if test="kind != null"> and kind = #{kind}</if>
+			<if test="fx != null"> and fx = #{fx}</if>
+			<if test="car_owner != null"> and car_owner = #{car_owner}</if>
+			<if test="card_no != null"> and card_no = #{card_no}</if>
+			<if test="status != null"> and status = #{status}</if>
+		</trim>
+	</select>
+	
+	<insert id="batch_add" parameterType="java.util.HashMap">
+		insert into cm_policy_data_info
+		(
+		policy,kind,policy_holder,phone,sex,addr,car_no,frame_no,engine_no,car_owner,idno,car_reg_date,underwrite_date,s_date,e_date,written_premium,fx,source,cust_manager,status,insurance,record_used
+
+		)
+		values  
+		<foreach collection="list" item="map"   separator=",">
+		(
+			#{map.policy},#{map.kind},#{map.policy_holder},#{map.phone},#{map.sex},#{map.addr},#{map.car_no},#{map.frame_no},#{map.engine_no},#{map.car_owner},#{map.idno},#{map.car_reg_date},#{map.underwrite_date},#{map.s_date},#{map.e_date},#{map.written_premium},#{map.fx},#{map.source},#{map.cust_manager},#{map.status},#{map.insurance},#{map.record_used}
+		)
+		</foreach>
+	 
+	</insert>
+
+	 
+	
+	
+ 
+	
+</mapper>

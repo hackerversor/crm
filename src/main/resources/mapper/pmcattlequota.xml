@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.crm.dao.PmCattleQuotaDao">
+	<select id="getByCattleid" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+		select cattle_id,quota from pm_cattle_quota where cattle_id = #{cattle_id}
+	</select>
+	<select id="getByCattleQuota" parameterType="java.util.HashMap" resultType="java.math.BigDecimal" >
+		select quota from pm_cattle_quota where cattle_id = #{cattle_id}
+	</select>
+	
+	<select id="getByCattleQuotaLock" parameterType="java.util.HashMap" resultType="java.math.BigDecimal" >
+		select quota from pm_cattle_quota where cattle_id = #{cattle_id} for update
+	</select>
+	
+	<update id="updateQuota" parameterType="java.util.HashMap">
+		update pm_cattle_quota set quota = #{quota} where cattle_id = #{cattle_id}
+	</update>
+	<insert id="create" parameterType="java.util.HashMap">
+		insert into pm_cattle_quota
+		(cattle_id,quota )
+		value
+		(#{cattle_id},#{quota})
+	</insert>
+</mapper>

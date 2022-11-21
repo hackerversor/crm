@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.crm.dao.SysOutParamInfoDao">
+	<select id="list" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select pid,param_code,param_value,param_desc from sys_out_param_info
+		<trim prefix="where" prefixOverrides="and">
+			<if test="param_code != null"> and param_code = #{param_code} </if>
+			<if test="pid != null"> and pid = #{pid} </if>
+		</trim>
+	</select>
+
+	<select id="getByPid" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select pid,param_code,param_value,param_desc from sys_out_param_info where  pid = #{pid}
+	</select>
+	
+	<select id="getByCode" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select pid,param_code,param_value,param_desc from sys_out_param_info where param_code = #{param_code}
+	</select>
+	
+</mapper>

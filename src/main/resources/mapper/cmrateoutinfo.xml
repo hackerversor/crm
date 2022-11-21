@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.crm.dao.CmRateOutInfoDao">
+
+	<insert id="add" parameterType="java.util.HashMap">
+		insert into cm_rate_out_info 
+		(company,rate_type,kind,inner_rate,out_rate,rate,stime,etime,ctime,status,user_id,remark)
+		values
+		(#{company},#{rate_type},#{kind},#{inner_rate},#{out_rate},#{rate},#{stime},#{etime},#{ctime},#{status},#{user_id},#{remark})
+	</insert>
+	<select id="query" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select pid,company,rate_type,kind,inner_rate,out_rate,rate,stime,etime,ctime,status,user_id,remark 
+		from cm_rate_out_info 
+		<trim prefixOverrides="and" prefix="where">
+			<if test="company != null"> and company= #{company} </if>
+			<if test="kind != null"> and kind = #{kind} </if>
+			<if test="status != null"> and status = #{status} </if>
+			<if test="stime != null"> and stime <![CDATA[ >= ]]> #{stime} </if>
+			<if test="etime != null"> and etime <![CDATA[ <= ]]> #{etime} </if>
+		</trim>
+		order by stime desc
+	</select>
+	<select id="queryMax" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select max(stime)stime, ctime, kind,status
+		from cm_rate_out_info 
+		<trim prefixOverrides="and" prefix="where">
+			<if test="company != null"> and company = #{company} </if>
+			<if test="kind != null"> and kind = #{kind} </if>
+			<if test="status != null"> and status = #{status} </if>
+			<if test="stime != null"> and stime <![CDATA[ <= ]]> #{stime} </if>
+			and status='use'
+		</trim>
+	</select>
+	<update id="modify" parameterType="java.util.HashMap">
+		update cm_rate_out_info 
+		<trim prefix="set" prefixOverrides=",">
+			<if test="etime != null"> etime = #{etime} </if>
+		</trim>
+		where pid = #{pid} 
+	</update>
+	<update id="delete" parameterType="java.util.HashMap">
+		update cm_rate_out_info set status = 'delete'
+		where pid = #{pid} and status = 'wait_use'
+	</update>
+
+</mapper>

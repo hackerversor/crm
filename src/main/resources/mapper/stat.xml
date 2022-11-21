@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.crm.dao.StatDao">
+	<select id="queryForQR" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select '累计用户数量: ' name,count(*) count from cu_cus_info where cus_type = 'cust' and `status` = 'normal'  union
+		select '当天新增用户数量: ' name,count(*) count from cu_cus_info where cus_type = 'cust' and `status` = 'normal' and date(ctime) = date(NOW()) union
+		select '累计激活金额: ' name,sum(fx) count from cm_policy_data_info a,  cu_cus_info b  where a.cusid = b.cusid  and cus_type = 'cust' union
+		select '当天新增激活金额: ' name,'----' count union
+		select '累计消费金额:  ' name,sum(amt) count from cu_consume_info a,  cu_cus_info b  where a.cusid = b.cusid  and cus_type = 'cust' and a.`status` in ('init','succ')  union
+		select '累计消费油话金额:  ' name,sum(amt) count from cu_consume_info a,  cu_cus_info b  where a.cusid = b.cusid  and cus_type = 'cust' and a.`status` in ('init','succ')  and tran_type in  ('001','002','003') union
+		select '累计消费交易市场金额: ' name ,sum(amt) count from cu_consume_info a,  cu_cus_info b  where a.cusid = b.cusid  and cus_type = 'cust' and a.`status` in ('init','succ')  and tran_type = '004' union
+		select '当天新增消费金额: ' name ,sum(amt)  count from cu_consume_info a,  cu_cus_info b  where a.cusid = b.cusid  and cus_type = 'cust' and a.`status` in ('init','succ')   and date(a.ctime) = date(NOW()) union
+		select '当天新增消费油话金额: ' name,sum(amt) count from cu_consume_info a,  cu_cus_info b  where a.cusid = b.cusid  and cus_type = 'cust' and a.`status` in ('init','succ')  and tran_type in  ('001','002','003') and date(a.ctime) = date(NOW()) union
+		select '当天新增消费交易市场金额: ' name,sum(amt) count from cu_consume_info a,  cu_cus_info b  where a.cusid = b.cusid  and cus_type = 'cust' and a.`status` in ('init','succ')  and tran_type = '004' and date(a.ctime) = date(NOW()) union
+		select '累计客户余额: ' name, sum(balance) count from cu_acct_info a,cu_cus_info b where a.cusid = b.cusid   and cus_type = 'cust' union
+		select '累计未激活金额: ' name, sum(fx) count from cm_policy_data_info where cusid is null and record_used = 'unused'
+	</select>
+	
+
+	
+	<select id="dmyQueryByMonth" resultType="java.util.HashMap" parameterType="java.util.HashMap" >
+    	select count(*) count ,sum(premium) premium,kind,left(under_write_date,7) date from cm_stand_book
+    	
+    	<trim prefix="where" prefixOverrides="and">
+    		<if test="company != null"> and company = #{company} </if>
+    		<if test="channel != null"> and channel = #{channel} </if>
+    		<if test="under_write_date_s != null"> and under_write_date <![CDATA[>= ]]> #{under_write_date_s} </if>
+    		<if test="under_write_date_e != null"> and under_write_date <![CDATA[<= ]]> #{under_write_date_e} </if>
+    		<if test="user_id != null"> and user_id = #{user_id} </if>
+    		<if test="kind != null"> and kind in 
+			<foreach collection="kind" item="item" open="(" close=")"  separator=",">
+				#{item}
+			</foreach>
+		</if>
+    	</trim>
+    	group by left(under_write_date,7),kind  
+	</select>
+	
+	<select id="dmyQueryByDay" resultType="java.util.HashMap" parameterType="java.util.HashMap" >
+      	select count(*) count,sum(premium) premium,kind,left(under_write_date,10) date from cm_stand_book
+    	<trim prefix="where" prefixOverrides="and">
+    		<if test="company != null"> and company = #{company} </if>
+    		<if test="channel != null"> and channel = #{channel} </if>
+    		<if test="under_write_date_s != null"> and under_write_date <![CDATA[>= ]]> #{under_write_date_s} </if>
+    		<if test="under_write_date_e != null"> and under_write_date <![CDATA[<= ]]> #{under_write_date_e} </if>
+    		<if test="user_id != null"> and user_id = #{user_id} </if>
+    		<if test="kind != null"> and kind in 
+			<foreach collection="kind" item="item" open="(" close=")"  separator=",">
+				#{item}
+			</foreach>
+		</if>
+    	</trim>
+    	group by under_write_date,kind   
+	</select>
+	
+	<select id="queryByUser" resultType="java.util.HashMap" parameterType="java.util.HashMap" >
+		select a.user_id,b.name,c.policy_count,d.cx_premium,e.fc_premium from cm_team_user_info a 
+		left join cm_user_info b on a.user_id = b.user_id
+		left join (select count(*) policy_count,user_id from cm_stand_book_user_car where  under_write_date <![CDATA[>= ]]> #{sdate} and under_write_date <![CDATA[<= ]]> #{edate}  group by user_id ) c on a.user_id = c.user_id  
+		left join (select sum(premium)  cx_premium,user_id from cm_stand_book_user_premium where  under_write_date <![CDATA[>= ]]> #{sdate} and under_write_date <![CDATA[<= ]]> #{edate} and kind in ('sxzb','sxxb')  group by user_id ) d on a.user_id = d.user_id 
+		left join (select sum(premium)  fc_premium,user_id from cm_stand_book_user_premium where  under_write_date <![CDATA[>= ]]> #{sdate} and under_write_date <![CDATA[<= ]]> #{edate} and kind = 'jyx' group by user_id ) e on a.user_id = e.user_id  
+		<if test="order_field == 'policy_count' "> order by policy_count</if>
+		<if test="order_field == 'cx_premium' ">  order by  cx_premium </if>
+		<if test="order_field == 'fc_premium' "> order by fc_premium</if>
+		<if test="order_type == 'desc' "> desc</if>
+		, b.name
+	</select>
+	
+	
+	<select id="stat_user_data" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+ 		select 
+			a.user_id,
+			b.name,
+			<if test='stat_type == "D" '> left(under_write_date,10) under_write_date, </if>
+			<if test='stat_type == "M" '> left(under_write_date,7)  under_write_date, </if>
+			count(*) count,
+			sum(premium) premium 
+			from cm_stand_book  a,cm_user_info b
+		where a.user_id = b.user_id
+		<if test="under_write_date_s != null"> <![CDATA[ and under_write_date >= #{under_write_date_s} ]]> </if>
+		<if test="under_write_date_e != null"> <![CDATA[ and under_write_date <= #{under_write_date_e} ]]> </if>
+		<if test="kind != null"> and kind in 
+			<foreach collection="kind" item="item" open="(" close=")"  separator=",">
+				#{item}
+			</foreach>
+		</if>
+		<if test="user_id != null">and a.user_id in
+			<foreach collection="user_id" item="item" open="(" close=")"  separator=",">
+				#{item}
+			</foreach>
+		</if>
+		<if test='stat_type == "D" '> group by left(under_write_date,10) , a.user_id order by left(under_write_date,10) </if>
+		<if test='stat_type == "M" '> group by left(under_write_date,7)  , a.user_id order by left(under_write_date,7) </if>
+		
+	</select>
+	
+ 	<select id="premium_by_date" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+ 		select a.user_id,b.name,count(*) count,sum(premium) premium from cm_stand_book  a,cm_user_info b
+		where a.user_id = b.user_id
+		<if test="under_write_date_s != null"> <![CDATA[ and under_write_date >= #{under_write_date_s} ]]> </if>
+		<if test="under_write_date_e != null"> <![CDATA[ and under_write_date <= #{under_write_date_e} ]]> </if>
+		<if test="kind != null"> and kind in 
+			<foreach collection="kind" item="item" open="(" close=")"  separator=",">
+				#{item}
+			</foreach>
+		</if>
+		<if test="user_id != null">and a.user_id in
+			<foreach collection="user_id" item="item" open="(" close=")"  separator=",">
+				#{item}
+			</foreach>
+		</if>
+		group by b.user_id
+		order by premium desc	
+	</select>
+	
+</mapper>

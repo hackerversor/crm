@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.crm.dao.PmCattleNoticeInfoDao">
+	<select id="list" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+		select notice_id,cattle_id,title,sdate,edate,ctime,amt,discount,max_times,used_times,status,remark from pm_cattle_notice_info
+		<trim	prefix="where" prefixOverrides="and">
+			<if test="notice_id != null"> and notice_id = #{notice_id} </if>
+			<if test="cattle_id != null"> and cattle_id = #{cattle_id} </if>
+			<if test="status != null"> and status = #{status} </if>
+		</trim>
+	</select>
+	
+	<select id="used_quota" parameterType="java.util.HashMap" resultType="java.math.BigDecimal">
+		<![CDATA[
+		select sum((max_times-ifnull(used_times,0))*amt) used_quota from pm_cattle_notice_info 
+		where status = 'useable' and sdate <= DATE(now()) and edate >= DATE(now()) and cattle_id = #{cattle_id}
+		]]>
+		
+	</select>
+	
+	<select id="qryAllCanUse" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		<![CDATA[ 
+			select
+				notice_id,cattle_id,title,sdate,edate,ctime,amt,discount,max_times,used_times,status,remark
+			from pm_cattle_notice_info
+			where status = "useable"
+				and  used_times < max_times 
+				and  stime <= curdate()  
+				and  etime >=curdate()  
+				order BY amt desc
+		]]>
+	</select>
+	
+	<insert id="add" parameterType="java.util.HashMap">
+		insert into pm_cattle_notice_info
+		(notice_id,cattle_id,title,sdate,edate,ctime,amt,discount,max_times,used_times,status,remark)
+		value
+		(#{notice_id},#{cattle_id},#{title},#{sdate},#{edate},#{ctime},#{amt},#{discount},#{max_times},#{used_times},#{status},#{remark})
+	</insert>
+	
+	
+	<select id="getById" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		<![CDATA[
+		select notice_id,cattle_id,title,sdate,edate,ctime,amt,discount,max_times,used_times,status,remark from pm_cattle_notice_info 
+		where status = 'useable' and sdate <= DATE(now()) and edate >= DATE(now()) and max_times > used_times and notice_id = #{notice_id}
+		]]>
+	</select>
+	
+	<select id="getAllById" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		<![CDATA[
+		select notice_id,cattle_id,title,sdate,edate,ctime,amt,discount,max_times,used_times,status,remark from pm_cattle_notice_info 
+		where  notice_id = #{notice_id}
+		]]>
+	</select>
+	
+	<select id="getByIdLock" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		<![CDATA[
+		select notice_id,cattle_id,title,sdate,edate,ctime,amt,discount,max_times,used_times,status,remark from pm_cattle_notice_info 
+		where status = 'useable' and sdate <= DATE(now()) and edate >= DATE(now()) and max_times > used_times and notice_id = #{notice_id} for update
+		]]>
+	</select>
+	
+	
+	<update id="usedTimeAdd" parameterType="java.util.HashMap">
+		update pm_cattle_notice_info set used_times  = used_times+1 where notice_id = #{notice_id} 
+	
+	</update>
+	
+	<update id="usedTimeSub" parameterType="java.util.HashMap">
+		update pm_cattle_notice_info set used_times  = used_times-1 where notice_id = #{notice_id} 
+	
+	</update>
+	
+	
+</mapper>

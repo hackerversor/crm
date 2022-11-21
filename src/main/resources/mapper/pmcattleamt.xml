@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.crm.dao.PmCattleAmtDao">
+	<select id="getByCattleId" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+		select cattle_id,amt from pm_cattle_amt where cattle_id = #{cattle_id}
+	</select>
+	
+	<select id="getByCattleAmt" parameterType="java.util.HashMap" resultType="java.math.BigDecimal" >
+		select amt from pm_cattle_amt where cattle_id = #{cattle_id}
+	</select>
+	
+	<select id="getByCattleAmtLock" parameterType="java.util.HashMap" resultType="java.math.BigDecimal" >
+		select amt from pm_cattle_amt where cattle_id = #{cattle_id} for update
+	</select>
+	
+	<update id="updateAmt" parameterType="java.util.HashMap">
+		update pm_cattle_amt set amt = #{amt} where cattle_id = #{cattle_id}
+	</update>
+	<insert id="create" parameterType="java.util.HashMap">
+		insert into pm_cattle_amt
+		(cattle_id,amt )
+		value
+		(#{cattle_id},#{amt})
+	</insert>
+</mapper>

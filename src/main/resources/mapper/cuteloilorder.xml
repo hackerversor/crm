@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.crm.dao.CuTelOilOrderDao">
+	<select id="list" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+		select order_id,payno,shunt,supplier,cusid,rech_type,rech_no,supplier_proid,amt,supplier_amt,status,status_msg,oper_status,supplier_order,stime,etime,operid,remark 
+		from cu_tel_oil_order 
+		<trim prefix="where" prefixOverrides="and">
+			<if test="order_id != null"> and order_id = #{order_id}</if>
+			<if test="payno != null"> and payno = #{payno}</if>
+			<if test="cusid != null"> and cusid = #{cusid}</if>
+			<if test="rech_no != null"> and rech_no = #{rech_no}</if>
+			<if test="status != null"> and status = #{status}</if>
+			<if test="s_date != null">   <![CDATA[ and left(stime,10) >= #{s_date} ]]> </if>
+			<if test="e_date != null">   <![CDATA[ and left(stime,10) <= #{e_date} ]]> </if>
+		</trim>
+	</select>
+	 
+	<insert id="add" parameterType="java.util.HashMap">
+		insert into cu_tel_oil_order 
+		(order_id,payno,shunt,supplier,cusid,rech_type,rech_no,supplier_proid,amt,supplier_amt,status,status_msg,oper_status,supplier_order,stime,etime,operid,remark)
+		values
+		(#{order_id},#{payno},#{shunt},#{supplier},#{cusid},#{rech_type},#{rech_no},#{supplier_proid},#{amt},#{supplier_amt},#{status},#{status_msg},#{oper_status},#{supplier_order},#{stime},#{etime},#{operid},#{remark})
+	</insert>
+	
+	<delete id="delete" parameterType="java.util.HashMap">
+		delete from cu_tel_oil_order where order_id = #{order_id}
+	</delete>
+	<update id="update" parameterType="java.util.HashMap">
+		update cu_tel_oil_order
+		<trim prefix="set" prefixOverrides=",">
+			<if test="supplier_amt != null"> , supplier_amt = #{supplier_amt}</if>
+			<if test="status != null"> , status = #{status}</if>
+			<if test="status_msg != null"> , status_msg = #{status_msg}</if>
+			<if test="oper_status != null"> , oper_status = #{oper_status}</if>
+			<if test="supplier_order != null"> , supplier_order = #{supplier_order}</if>
+			<if test="etime != null"> , etime = #{etime}</if>
+			<if test="operid != null"> , operid = #{operid}</if>
+			<if test="remark != null"> , remark = #{remark}</if>
+		</trim>
+		where order_id = #{order_id}
+	</update> 
+	
+	<select id="getByOrderidLock" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+		select order_id,payno,shunt,supplier,cusid,rech_type,rech_no,supplier_proid,amt,supplier_amt,status,status_msg,oper_status,supplier_order,stime,etime,operid,remark 
+		from cu_tel_oil_order where order_id = #{order_id} for update
+	</select>
+	
+	<select id="getByOrderid" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+		select order_id,payno,shunt,supplier,cusid,rech_type,rech_no,supplier_proid,amt,supplier_amt,status,status_msg,oper_status,supplier_order,stime,etime,operid,remark 
+		from cu_tel_oil_order where order_id = #{order_id}
+	</select>
+	
+	
+	<select id="queryRunOrder" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		<![CDATA[  
+			select order_id,payno,shunt,supplier,cusid,rech_type,rech_no,supplier_proid,amt,supplier_amt,status,status_msg,oper_status,supplier_order,stime,etime,operid,remark 
+			from cu_tel_oil_order 
+			where  status = 'running' and oper_status = 'init' and date_add(stime,interval 2 hour) < now() 
+			order by etime  limit 50
+		]]>
+	</select>
+	
+</mapper>

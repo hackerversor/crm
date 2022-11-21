@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.crm.dao.CuCusInfoDao">
+	<select id="list" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select cusid,openid,phone,ctime,last_login_time,status,cus_type,nickname,remark from cu_cus_info
+		<trim prefix="where" prefixOverrides="and">
+			<if test="cusid != null"> and cusid = #{cusid} </if>
+			<if test="openid != null"> and openid = #{openid} </if>
+			<if test="phone != null"> and phone = #{phone} </if>
+			<if test="status != null"> and status = #{status} </if>
+		</trim>
+	</select>
+
+	<select id="getByCusid" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select cusid,openid,phone,ctime,last_login_time,status,cus_type,nickname,remark from cu_cus_info where  cusid = #{cusid}
+	</select>
+	
+	<select id="getByPhone" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select cusid,openid,phone,ctime,last_login_time,status,cus_type,nickname,remark from cu_cus_info where  phone = #{phone} and status = 'normal'
+	</select>
+	<select id="getByPhoneLock" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select cusid,openid,phone,ctime,last_login_time,status,cus_type,nickname,remark from cu_cus_info where  phone = #{phone} and status = 'normal' for update
+	</select>
+	<select id="getByOpenid" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select cusid,openid,phone,ctime,last_login_time,status,cus_type,nickname,remark from cu_cus_info where  openid = #{openid} and status = 'normal' 
+	</select>
+	<select id="getByOpenidLock" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select cusid,openid,phone,ctime,last_login_time,status,cus_type,nickname,remark from cu_cus_info where  openid = #{openid} and status = 'normal' for update
+	</select>
+	
+	<update id="upadte" parameterType="java.util.HashMap">
+		update cu_cus_info set last_login_time = #{last_login_time} ,nickname = #{nickname} where cusid = #{cusid}
+	</update>
+	
+	<insert id="add" parameterType="java.util.HashMap">
+		insert into cu_cus_info
+		(cusid,openid,phone,ctime,last_login_time,status,cus_type,nickname,remark)
+		values
+		(#{cusid},#{openid},#{phone},#{ctime},#{last_login_time},#{status},#{cus_type},#{nickname},#{remark})
+		
+	</insert>
+</mapper>

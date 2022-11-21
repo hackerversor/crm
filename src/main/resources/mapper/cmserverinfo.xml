@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.crm.dao.CmServerInfoDao">
+	<select id="query" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select server_id,short_name,addr_ip,acct_id,disk,memory,cpu,buy_date,exp_date,status,remark 
+		from cm_server_info 
+		<trim prefixOverrides="and" prefix="where">
+			<if test="server_id != null"> and server_id = #{server_id} </if>
+			<if test="addr_ip != null"> and addr_ip = #{addr_ip} </if>
+		</trim>
+	</select>
+	
+	<select id="queryLock" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select server_id,short_name,addr_ip,acct_id,disk,memory,cpu,buy_date,exp_date,status,remark 
+		from cm_server_info 
+		<trim prefixOverrides="and" prefix="where">
+			<if test="server_id != null"> and server_id = #{server_id} </if>
+			<if test="addr_ip != null"> and addr_ip = #{addr_ip} </if>
+		</trim>
+		for update
+	</select>
+	
+	<insert id="add" parameterType="java.util.HashMap">
+		insert into cm_server_info
+		(server_id,short_name,addr_ip,acct_id,disk,memory,cpu,buy_date,exp_date,status,remark)
+		values
+		(#{server_id},#{short_name},#{addr_ip},#{acct_id},#{disk},#{memory},#{cpu},#{buy_date},#{exp_date},#{status},#{remark})
+	
+	</insert>
+	
+	<select id="listServers" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select server_id,short_name,addr_ip,acct_id,disk,memory,cpu,buy_date,exp_date,status,remark 
+		from cm_server_info 
+		<trim prefixOverrides="and" prefix="where">
+			<if test="server_id != null"> and server_id = #{server_id} </if>
+			<if test="addr_ip != null"> and addr_ip = #{addr_ip} </if>
+			<if test="short_name != null"> and short_name like concat('%',#{short_name},'%') </if>
+			<if test="status != null"> and status = #{status} </if>
+		</trim>
+	</select>
+	
+	<update id="update" parameterType="java.util.HashMap">
+		update cm_server_info 
+		<trim prefix="set" prefixOverrides=",">
+			<if test="short_name != null"> , short_name = #{short_name}</if>
+			<if test="addr_ip != null"> , addr_ip = #{addr_ip}</if>
+			<if test="acct_id != null"> , acct_id = #{acct_id}</if>
+			<if test="disk != null"> , disk = #{disk}</if>
+			<if test="memory != null"> , memory = #{memory}</if>
+			<if test="cpu != null"> , cpu = #{cpu}</if>
+			<if test="buy_date != null"> , buy_date = #{buy_date}</if>
+			<if test="exp_date != null"> , exp_date = #{exp_date}</if>
+			<if test="status != null"> , status = #{status}</if>
+			<if test="remark != null"> , remark = #{remark}</if>
+		</trim>
+		where server_id = #{server_id}
+	</update>
+	
+</mapper>

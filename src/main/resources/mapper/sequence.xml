@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.crm.dao.SequenceDao">
+    <select id="getSequence"  parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+         select pid,seq_code,prefix,seq_value,max_length,seq_desc from sys_sequence where seq_code = #{seq_code} for update
+    </select>
+    
+    <update id="updateSequence" parameterType="java.util.HashMap">
+         update sys_sequence set seq_value = #{seq_value} where seq_code =#{seq_code} 
+    </update>
+ 
+</mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.common.crm.dao.CuCarInfoDao">
+
+	<insert id="add" parameterType="java.util.HashMap">
+		insert into cu_car_info
+		(carid,cusid,car_owner,idno,car_no,engine,frame_no,brand,brand_model,brand_date,reg_date,mileage,status,ctime,remark)
+		values
+		(#{carid},#{cusid},#{car_owner},#{idno},#{car_no},#{engine},#{frame_no},#{brand},#{brand_model},#{brand_date},#{reg_date},#{mileage},#{status},#{ctime},#{remark})
+	</insert>
+
+	<select id="list" parameterType="java.util.HashMap" resultType="java.math.BigDecimal" >
+		select carid,cusid,car_owner,idno,car_no,engine,frame_no,brand,brand_model,brand_date,reg_date,mileage,status,ctime,remark from cu_car_info
+		<trim prefix="where" prefixOverrides="and">
+			<if test="carid != null"> and carid = #{carid}</if>
+			<if test="car_no != null"> and car_no = #{car_no}</if>
+			<if test="cusid != null"> and cusid = #{cusid}</if>
+			<if test="status != null"> and status = #{status}</if>
+		</trim>
+
+	</select>
+
+	<select id="getByCarid" parameterType="java.util.HashMap" resultType="java.math.BigDecimal" >
+		select carid,cusid,car_owner,idno,car_no,engine,frame_no,brand,brand_model,brand_date,reg_date,mileage,status,ctime,remark from cu_car_info where cusid = #{cusid}
+	</select>
+
+
+
+</mapper>
